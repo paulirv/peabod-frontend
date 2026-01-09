@@ -16,6 +16,7 @@ interface Article {
   body: string;
   author: string;
   authored_on: string;
+  image?: string;
   tags?: Tag[];
 }
 

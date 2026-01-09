@@ -17,6 +17,7 @@ interface Article {
   body: string;
   author: string;
   authored_on: string;
+  image?: string;
   updated_at: string;
   tags?: Tag[];
 }
@@ -118,6 +119,16 @@ export default async function ArticlePage({
           </div>
         )}
       </header>
+
+      {article.image && (
+        <figure className="mb-8">
+          <img
+            src={`/api/media/${article.image}`}
+            alt={article.title}
+            className="w-full rounded-lg shadow-md"
+          />
+        </figure>
+      )}
 
       <div className="prose prose-lg max-w-none">
         {article.body.split("\n").map((paragraph, index) => (

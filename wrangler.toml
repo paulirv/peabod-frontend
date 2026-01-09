@@ -13,5 +13,10 @@ binding = "DB"
 database_name = "peabod-db"
 database_id = "5ed11927-6e71-4496-b76f-a9fc3d4467f8"
 
+# R2 Storage binding (for serving media)
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "peabod"
+
 [vars]
 ENVIRONMENT = "production"

@@ -12,6 +12,7 @@ interface ArticleCardProps {
   author: string;
   authored_on: string;
   body: string;
+  image?: string;
   tags?: Tag[];
 }
 
@@ -21,6 +22,7 @@ export default function ArticleCard({
   author,
   authored_on,
   body,
+  image,
   tags,
 }: ArticleCardProps) {
   const excerpt = body.length > 200 ? body.substring(0, 200) + "..." : body;
@@ -31,12 +33,22 @@ export default function ArticleCard({
   });
 
   return (
-    <article className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
-      <Link href={`/article/${slug}`}>
-        <h2 className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors mb-2">
-          {title}
-        </h2>
-      </Link>
+    <article className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+      {image && (
+        <Link href={`/article/${slug}`}>
+          <img
+            src={`/api/media/${image}`}
+            alt={title}
+            className="w-full h-48 object-cover"
+          />
+        </Link>
+      )}
+      <div className="p-6">
+        <Link href={`/article/${slug}`}>
+          <h2 className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors mb-2">
+            {title}
+          </h2>
+        </Link>
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
         <span>{author}</span>
         <span>&middot;</span>
@@ -61,6 +73,7 @@ export default function ArticleCard({
       >
         Read more &rarr;
       </Link>
+      </div>
     </article>
   );
 }
