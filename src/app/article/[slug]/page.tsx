@@ -1,0 +1,131 @@
+import { getDB } from "@/lib/db";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+
+export const runtime = "edge";
+
+interface Tag {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+interface Article {
+  id: number;
+  slug: string;
+  title: string;
+  body: string;
+  author: string;
+  authored_on: string;
+  updated_at: string;
+  tags?: Tag[];
+}
+
+async function getArticle(slug: string): Promise<Article | null> {
+  try {
+    const db = getDB();
+    const article = await db
+      .prepare("SELECT * FROM articles WHERE slug = ? AND published = 1")
+      .bind(slug)
+      .first<Article>();
+
+    if (!article) return null;
+
+    // Get tags
+    const { results: tags } = await db
+      .prepare(
+        `SELECT t.* FROM tags t
+         JOIN article_tags at ON t.id = at.tag_id
+         WHERE at.article_id = ?`
+      )
+      .bind(article.id)
+      .all();
+
+    return { ...article, tags: (tags || []) as Tag[] };
+  } catch (error) {
+    console.error("Error fetching article:", error);
+    return null;
+  }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const article = await getArticle(slug);
+
+  if (!article) {
+    return { title: "Article Not Found" };
+  }
+
+  return {
+    title: `${article.title} | Peabod`,
+    description: article.body.substring(0, 160),
+  };
+}
+
+export default async function ArticlePage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const article = await getArticle(slug);
+
+  if (!article) {
+    notFound();
+  }
+
+  const formattedDate = new Date(article.authored_on).toLocaleDateString(
+    "en-US",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }
+  );
+
+  return (
+    <article className="max-w-3xl mx-auto px-4 py-12">
+      <Link
+        href="/"
+        className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-8"
+      >
+        &larr; Back to all articles
+      </Link>
+
+      <header className="mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          {article.title}
+        </h1>
+        <div className="flex items-center gap-2 text-gray-500">
+          <span>{article.author}</span>
+          <span>&middot;</span>
+          <time dateTime={article.authored_on}>{formattedDate}</time>
+        </div>
+        {article.tags && article.tags.length > 0 && (
+          <div className="flex gap-2 mt-4">
+            {article.tags.map((tag) => (
+              <span
+                key={tag.id}
+                className="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full"
+              >
+                {tag.name}
+              </span>
+            ))}
+          </div>
+        )}
+      </header>
+
+      <div className="prose prose-lg max-w-none">
+        {article.body.split("\n").map((paragraph, index) => (
+          <p key={index} className="mb-4 text-gray-700 leading-relaxed">
+            {paragraph}
+          </p>
+        ))}
+      </div>
+    </article>
+  );
+}

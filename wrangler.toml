@@ -1,0 +1,17 @@
+main = ".open-next/worker.js"
+name = "peabod-frontend"
+compatibility_date = "2025-03-25"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+# D1 Database binding (read access for frontend)
+[[d1_databases]]
+binding = "DB"
+database_name = "peabod-db"
+database_id = "5ed11927-6e71-4496-b76f-a9fc3d4467f8"
+
+[vars]
+ENVIRONMENT = "production"
