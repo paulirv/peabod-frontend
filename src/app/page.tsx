@@ -33,7 +33,7 @@ async function getArticles(): Promise<Article[]> {
          FROM articles a
          LEFT JOIN media m ON a.media_id = m.id
          WHERE a.published = 1
-         ORDER BY a.authored_on DESC LIMIT 20`
+         ORDER BY a.authored_on DESC, a.id DESC LIMIT 20`
       )
       .all();
 
