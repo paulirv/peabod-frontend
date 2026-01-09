@@ -1,7 +1,6 @@
 import { getDB } from "@/lib/db";
 import { notFound } from "next/navigation";
 
-export const runtime = "edge";
 
 interface Page {
   id: number;

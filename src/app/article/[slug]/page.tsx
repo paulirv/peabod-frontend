@@ -2,7 +2,6 @@ import { getDB } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
-export const runtime = "edge";
 
 interface Tag {
   id: number;
@@ -42,7 +41,7 @@ async function getArticle(slug: string): Promise<Article | null> {
       .bind(article.id)
       .all();
 
-    return { ...article, tags: (tags || []) as Tag[] };
+    return { ...article, tags: (tags || []) as unknown as Tag[] };
   } catch (error) {
     console.error("Error fetching article:", error);
     return null;

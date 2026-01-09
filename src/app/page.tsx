@@ -1,7 +1,6 @@
 import { getDB } from "@/lib/db";
 import ArticleCard from "@/components/ArticleCard";
 
-export const runtime = "edge";
 
 interface Tag {
   id: number;
@@ -41,7 +40,7 @@ async function getArticles(): Promise<Article[]> {
           )
           .bind(art.id)
           .all();
-        return { ...art, tags: (tags || []) as Tag[] };
+        return { ...art, tags: (tags || []) as unknown as Tag[] };
       })
     );
 

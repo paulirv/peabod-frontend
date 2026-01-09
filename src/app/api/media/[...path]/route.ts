@@ -1,7 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextRequest, NextResponse } from "next/server";
 
-export const runtime = "edge";
 
 function getR2Bucket(): R2Bucket {
   const { env } = getCloudflareContext();
